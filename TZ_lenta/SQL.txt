@@ -13,16 +13,13 @@ GROUP BY acc_id
 «Гипермаркет» более 8 недель и формат «Авто» более 4 недель
 */
 SELECT DISTINCT(acc_id)
-FROM transactions
-WHERE ((frmt_name = 'У Дома'
-        OR frmt_name = 'Гипермаркет')
-  AND EXTRACT (YEAR
-  FROM (DAY
-        FROM (now() - fl.actual_arrival) > 56)
-  OR (frmt_name = 'У Дома'
-  AND
-  FROM (DAY
-        FROM (now() - fl.actual_arrival) > 32)
+FROM transactions t
+JOIN warehouses w ON t.whs_id = w.whs_id
+WHERE ((w.frmt_name = 'У дома'
+        OR w.frmt_name = 'Гипермаркет')
+       AND (date_part('day', now() - t.trn_date) > 56))
+  OR (w.frmt_name = 'Авто'
+  AND (date_part('day', now() - t.trn_date) > 32)
 /*
 Выведете клиентов, у которых 80% чеков содержат от 10 шт. каждого
 товара в чеке.
@@ -32,7 +29,7 @@ WITH acc_trnd AS
           sum(t.trn_id)sum_trnd
    FROM transactions t
    GROUP BY t.acc_id
-   HAVING qnty >=10) sub_1
+   HAVING qnty >=10)
 SELECT t.acc_id
 FROM transactions t
 JOIN acc_trnd a ON t.acc_id = a.acc_id
