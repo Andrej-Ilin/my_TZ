@@ -76,7 +76,6 @@ class my_linalg():
         return matrix
 
         """Находит обратную матрицу"""
-        """Находит определитель матрицы"""
 
     def del_mat_inv(self, matrix, i, j):
         """убераем столбец и строку в подматрице"""
@@ -88,48 +87,50 @@ class my_linalg():
         return new_matrix
 
     def inv_pred(self, matrix, det_A):
-        sign = 1
-        if len(matrix) == 1:
-            return matrix[0][0]
-        if len(matrix) == 2:
-            d = (matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0])
-            return d
+        """"Если det == 0 то обратной матрицы не существует"""
+        inv_matrix = [[0 for k in range(len(matrix))] for l in range(len(matrix))]
         for i in range(len(matrix)):
             for j in range(len(matrix)):
-                self.inv_matrix[i][j] = sign * self.inv_pred(self.del_mat_inv(matrix, i, j), det_A) / det_A
-                sign *= -1
-        return self.inv_matrix
+                if (i + j) % 2 != 0:
+                    sign = -1
+                else:
+                    sign = 1
+                inv_matrix[i][j] = sign * self.det(self.del_mat_inv(matrix, j, i)) / det_A
+
+        return inv_matrix
 
     def inv(self, matrix):
         det_A = self.det(matrix)
         n = len(matrix)
         m = len(matrix[0])
         """"Если det == 0 то обратной матрицы не существует"""
-        if det_A == 0 and det_A == None:
+        if det_A == 0 and det_A is None:
             return None
         elif n != m:
             return None
-        matrix = self.transponse(matrix)
-        self.inv_matrix = [[0 for k in range(len(matrix))] for l in range(len(matrix))]
+        # matrix = self.transponse(matrix)
         inv_matrixs = self.inv_pred(matrix, det_A)
         return inv_matrixs
 
 
-A = [[2, 1, 5],
-     [1, 6, 2],
-     [3, 5, 8]]
+A = [[2, 1, 5, 2],
+     [1, 6, 2, 5],
+     [3, 5, 8, 6],
+     [3, 6, 9, 2]]
+
 B = [[4, 2, 5],
      [6, 5, 4],
      [9, 8, 9]]
+
 lingalg = my_linalg()
 
 print('определитель', lingalg.det(A))
 print('обратная матрица', lingalg.inv(A))
-# print(np.linalg.det(A))
+print(np.linalg.det(A))
 print(np.linalg.inv(A))
-print("сложение", lingalg.addition(A, B))
-print(np.array(A) + np.array(B))
-print('вычитание', lingalg.subtraction(A, B))
-print('транспонирование', lingalg.transponse(A))
-print('умножение', lingalg.multyply(A, B))
-print(np.array(A) @ np.array(B))
+# print("сложение", lingalg.addition(A, B))
+# print(np.array(A) + np.array(B))
+# print('вычитание', lingalg.subtraction(A, B))
+# print('транспонирование', lingalg.transponse(A))
+# print('умножение', lingalg.multyply(A, B))
+# print(np.array(A) @ np.array(B))
